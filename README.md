@@ -10,7 +10,9 @@ This command-line tool is designed for processing BMP images by providing functi
 
 ## Usage
 ### Applying Sepia Filter:
-```./image_transformer <input file> <output file>```
+```
+./image_transformer <input file> <output file>
+```
 
 `<input file>`: Path to the input BMP image file.
 
@@ -18,7 +20,9 @@ This command-line tool is designed for processing BMP images by providing functi
 
 ### Rotating Images:
 
-```./image_transformer <input file> <output file> <rotation_angle>```
+```
+./image_transformer <input file> <output file> <rotation_angle>
+```
 
 `<input file>`: Path to the input BMP image file.
 
@@ -26,7 +30,22 @@ This command-line tool is designed for processing BMP images by providing functi
 
 `<rotation_angle>`: Rotation angle in degrees (clockwise).
 
-### Building
-```make all```
+## Building
+```
+make all
+```
+This will compile the source code and generate the executable `image_transformer`. No extra dependencies required.
 
-This will compile the source code and generate the executable image_transformer. No extra dependencies required.
+## Examples
+
+```
+./image_transformer ./input.bmp ./output_rotation.bmp 270
+```
+
+![rotation test](./output_rotation.bmp)
+
+```
+./image_transformer ./input.bmp ./output_sepia.bmp
+```
+
+![sepia test](./output_sepia.bmp)

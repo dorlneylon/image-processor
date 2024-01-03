@@ -41,7 +41,7 @@ void check(void) {
   printf("With SSE instructions: %f\n", (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec) / 1e9);
 }
 
-int main(void) {
+/*int main(void) {
   check();
   return 0;
-}
+}*/
