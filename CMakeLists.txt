@@ -3,7 +3,7 @@ project(image_transformer C)
 enable_language(ASM_NASM)
 
 set(CMAKE_C_STANDARD 11)
-set(CMAKE_C_FLAGS "-std=c17 -O2 -march=native -msse -msse2 -mavx2 -F dwarf -no-pie -Wall -Wextra -Wpedantic -Werror -g3 -ggdb")
+set(CMAKE_C_FLAGS "-std=c17 -O2 -lm -march=native -msse -msse2 -mavx2 -F dwarf -no-pie -Wall -Wextra -Wpedantic -Werror -g3 -ggdb")
 set(CMAKE_ASM_NASM_SOURCE_FILE_EXTENSIONS asm)
 set(CMAKE_ASM_NASM_OBJECT_FORMAT elf64)
 set(CMAKE_ASM_NASM_COMPILE_OBJECT "<CMAKE_ASM_NASM_COMPILER> <INCLUDES> \
