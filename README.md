@@ -32,7 +32,10 @@ This command-line tool is designed for processing BMP images by providing functi
 
 ## Building
 ```
-make all
+mkdir build
+cd build
+cmake ..
+cmake --build .
 ```
 This will compile the source code and generate the executable `image_transformer`. No extra dependencies required.
 

@@ -1,47 +1,45 @@
-#include "io_status.h"
 #include "process.h"
-#include "sepia.h"
-#include <bits/time.h>
 #include <time.h>
 
 void check(void) {
   char **argv = (char**)malloc(3 * sizeof(char*));
   argv[0] = "process";
-  argv[1] = "asdasd.bmp";
+  argv[1] = "A.bmp";
   argv[2] = "output.bmp";
 
+  struct image img = {0};
+  enum read_status response_status = parse_input(3, argv, SEPIA_TYPE, NULL);
+  if (response_status)
+    return;
 
-  struct timespec start, start2, end;
-  clock_gettime(CLOCK_REALTIME, &start);
+  FILE *in = NULL;
+  response_status = open_file(argv[1], "rb", &in);
+  if (response_status)
+    return;
 
-  for (int i = 0; i < 100; ++i) {
-    int nok = sepia(1, 3, argv);
-    if (nok) {
-      printf("KOSHMAR %d", i);
-      return;
-    }
+  response_status = from_bmp(in, &img);
+  if (response_status) {
+    clear_image(&img);
+    return;
   }
 
-  clock_gettime(CLOCK_REALTIME, &end);
+  clock_t tstart = clock();
 
-  printf("No SSE instructions: %f\n", (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec) / 1e9);
-  clock_gettime(CLOCK_REALTIME, &start2);
-
-
-  for (int i = 0; i < 100; ++i) {
-    int nok = sepia(1, 3, argv);
-    if (nok) {
-      printf("KOSHMAR 2 %d", i);
-      return;
-    }
+  for (int i = 0; i < 5; ++i) {
+    struct image tmp = impl_sepia(&img);
+    (void)tmp;
   }
 
-  clock_gettime(CLOCK_REALTIME, &end);
+  clock_t tend = clock();
+  printf("%f\n", (double)(tend - tstart) / CLOCKS_PER_SEC);
 
-  printf("With SSE instructions: %f\n", (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec) / 1e9);
+  tstart = clock();
+
+  for (int i = 0; i < 5; ++i) {
+    struct image tmp = simd_impl_sepia(img);
+    (void)tmp;
+  }
+
+  tend = clock();
+  printf("%f\n", (double)(tend - tstart) / CLOCKS_PER_SEC);
 }
-
-/*int main(void) {
-  check();
-  return 0;
-}*/

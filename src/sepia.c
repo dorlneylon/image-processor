@@ -32,45 +32,13 @@ struct image impl_sepia(struct image const *img) {
   return new_image;
 }
 
-extern void simd_sepia_asm(struct pixel[static 4], struct pixel* result); // 4 pixels at a time
+extern void sepia_asm(uint8_t* src, uint8_t* result, uint32_t sz);
 
 struct image simd_impl_sepia(struct image img) {
   struct image ret = create_image(img.width, img.height);
   if (!ret.data)
     return img;
-
-  uint8_t* cpy = (uint8_t*)(img.data);
-  uint8_t* dst = (uint8_t*)(ret.data);
-
-  static const float coef[] = {
-    .189f, .686f, .272f, 1,
-    .393f, .168f, .534f, 1,
-    .769f, .349f, .131f, 1
-  };
-
-  for (uint32_t i = 0; i < 3 * img.sz; i += 3) {
-    __m128 res;
-    __m128 p = _mm_set_ps(cpy[i+2], cpy[i + 1], cpy[i], cpy[i + 3]);
-    __m128 q = _mm_load_ps(coef);
-    __m128 r = _mm_mul_ps(q, p);
-    res = r;
-    p = _mm_shuffle_ps(p, p, _MM_SHUFFLE(3, 1, 0, 2));
-    q = _mm_load_ps(coef + 4);
-    r = _mm_mul_ps(q, p);
-    res = _mm_add_ps(res, r);
-    p = _mm_shuffle_ps(p, p, _MM_SHUFFLE(3, 1, 0, 2));
-    q = _mm_load_ps(coef + 8);
-    r = _mm_mul_ps(q, p);
-    res = _mm_add_ps(res, r);
-    __m128i res_i = _mm_cvtps_epi32(res);
-    __m128i res_8 = _mm_packus_epi32(res_i, _mm_setzero_si128());
-    uint64_t packed_result = 0;
-    packed_result = _mm_cvtsi128_si64(res_8);
-    dst[2] = saturation(packed_result & 0xFF);
-    dst[1] = saturation((packed_result >> 16) & 0xFF);
-    dst[0] = saturation((packed_result >> 32) & 0xFF);
-    dst += 3;
-  }
-
+  
+  sepia_asm((uint8_t*)img.data, (uint8_t*)ret.data, 3*img.sz);
   return ret;
 }

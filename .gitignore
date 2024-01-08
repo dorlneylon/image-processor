@@ -2,8 +2,8 @@
 .vscode
 build/
 out/
-*.asm
 *.o
 test
 .clangd
 .git1
+makefile
